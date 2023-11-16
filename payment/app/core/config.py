@@ -13,10 +13,8 @@ ENV_PATH = os.path.join(BASE_DIR, ".env")
 
 class Settings(BaseSettings):
     API_VERSION: str = "/api/v1"
-    PROJECT_NAME: str
     PROJECT_VERSION: str
     PROJECT_HOST: str
-    PROJECT_PORT: int
 
     DB_USER: str
     DB_PASS: str

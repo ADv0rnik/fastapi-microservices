@@ -1,0 +1,79 @@
+version: '3.9'
+
+services:
+  rabbitmq:
+    image: lucifer8591/rabbitmq-server
+    container_name: rabbit
+    env_file:
+      - .env
+    hostname: rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBIT_DEFAULT_USER=${RABBIT_DEFAULT_USER}
+      - RABBIT_DEFAULT_PASS=${RABBIT_DEFAULT_PASS}
+    networks:
+      - app_network
+    restart: always
+  db:
+    image: postgres:14.5
+    container_name: postgres
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+    depends_on:
+      - rabbitmq
+    networks:
+      - app_network
+    restart: always
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    env_file:
+      - .env
+    environment:
+      - PGADMIN_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_PASS=${PGADMIN_PASS}
+    ports:
+      - "5555:80"
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    restart: always
+  producer:
+    container_name: producer_app
+    build: "inventory/"
+    ports:
+      - "8000:8000"
+    networks:
+      - app_network
+    depends_on:
+      - rabbitmq
+      - db
+    restart: always
+  consumer:
+    container_name: consumer_app
+    build: "payment/"
+    ports:
+      - "8080:8080"
+    networks:
+      - app_network
+    depends_on:
+      - rabbitmq
+      - db
+    restart: always
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  pgadmin_data:
