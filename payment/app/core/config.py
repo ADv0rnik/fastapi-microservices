@@ -18,6 +18,12 @@ class Settings(BaseSettings):
     PROJECT_HOST: str
     PROJECT_PORT: int
 
+    DB_USER: str
+    DB_PASS: str
+    DB_NAME: str
+    DB_HOST: str
+    DB_PORT: int
+
     ALLOWED_ORIGIN: List[AnyHttpUrl] = [
         "http://localhost",
         "http://127.0.0.1",

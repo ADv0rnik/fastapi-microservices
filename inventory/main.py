@@ -10,7 +10,7 @@ from app.core.config import Settings
 
 def start_application(config: Settings):
     application = FastAPI(
-        title=config.PROJECT_NAME,
+        title='inventory',
         debug=True,
         version=config.PROJECT_VERSION,
         docs_url=f"{config.API_VERSION}/docs",
@@ -41,6 +41,6 @@ if __name__ == '__main__':
     uvicorn.run(
         app="main:app",
         host=settings.PROJECT_HOST,
-        port=int(settings.PROJECT_PORT),
+        port=8000,
         reload=True
     )
