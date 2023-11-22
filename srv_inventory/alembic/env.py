@@ -4,9 +4,8 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
-from db.db_setup import SQLALCHEMY_DATABASE_URL
-from db.base import Base
-
+from backend.db.db_setup import SQLALCHEMY_DATABASE_URL
+from backend.db.base import Base
 
 config = context.config
 

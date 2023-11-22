@@ -13,6 +13,7 @@ ENV_PATH = os.path.join(BASE_DIR, ".env")
 
 class Settings(BaseSettings):
     API_VERSION: str = "/api/v1"
+    PROJECT_NAME: str
     PROJECT_VERSION: str
     PROJECT_HOST: str
 
@@ -36,3 +37,12 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+INIT_PRODUCT = [
+    {"name": "Cellphone", "amount": 10, "price": 199.99, "category_id": 1},
+    {"name": "Tablet", "amount": 5, "price": 299.99, "category_id": 1}
+]
+
+INIT_CATEGORY = {
+    "name": "electronics"
+}

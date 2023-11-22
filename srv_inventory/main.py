@@ -5,12 +5,12 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import Response
 
-from app.core.config import Settings
+from backend.core.config import Settings
 
 
 def start_application(config: Settings):
     application = FastAPI(
-        title='inventory',
+        title=config.PROJECT_NAME,
         debug=True,
         version=config.PROJECT_VERSION,
         docs_url=f"{config.API_VERSION}/docs",
@@ -38,9 +38,10 @@ async def route():
 
 
 if __name__ == '__main__':
+
     uvicorn.run(
         app="main:app",
-        host=settings.PROJECT_HOST,
+        host="127.0.0.1",
         port=8000,
         reload=True
     )
