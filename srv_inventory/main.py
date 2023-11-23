@@ -1,11 +1,15 @@
 import json
 import uvicorn
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import Response
+from sqlalchemy.orm import Session
 
 from backend.core.config import Settings
+from backend.schemas.schemas import ProductModel
+from backend.db.session import get_db
+from backend.crud.querysets import get_product_by_id
 
 
 def start_application(config: Settings):
@@ -32,16 +36,26 @@ app.add_middleware(
 
 
 @app.get('/')
-async def route():
+def route():
     message = {"message": "test"}
     return Response(content=json.dumps(message), status_code=200)
 
 
-if __name__ == '__main__':
+@app.get('/{product_id}', response_model=ProductModel)
+def get_product(product_id: int, db: Session = Depends(get_db)):
+    if product := get_product_by_id(db, product_id):
+        return product
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail=f"product with {product_id} not found"
+        )
 
+
+if __name__ == '__main__':
     uvicorn.run(
         app="main:app",
-        host="127.0.0.1",
-        port=8000,
+        host=settings.PROJECT_HOST,
+        port=int(settings.PORT),
         reload=True
     )

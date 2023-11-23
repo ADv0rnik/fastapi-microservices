@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str
     PROJECT_VERSION: str
     PROJECT_HOST: str
+    PORT: int
 
     DB_USER: str
     DB_PASS: str

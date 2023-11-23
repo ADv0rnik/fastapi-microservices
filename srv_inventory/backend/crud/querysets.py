@@ -26,3 +26,7 @@ def create_init_product(db: Session, product: Product):
     db.refresh(db_product)
 
     return db_product
+
+
+def get_product_by_id(db: Session, product_id: int) -> Product:
+    return db.query(Product).filter(Product.id == product_id).first()

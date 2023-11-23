@@ -1,6 +1,6 @@
 #!/bin/bash
 
 # shellcheck disable=SC2164
-cd .. &&  cd inventory/
+cd .. && alembic upgrade head
 
 python main.py
