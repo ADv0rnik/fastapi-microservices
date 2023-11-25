@@ -1,23 +1,11 @@
-import os
 import asyncio
-
-from pathlib import Path
-from dotenv import load_dotenv
+from resolver import resolve
+from config import RMQ_URL
 
 from aio_pika import connect_robust
 from aio_pika.patterns import RPC
 
-
-BASE_PATH = (Path(__file__) / ".." / "..").resolve()
-ENV_PATH = os.path.join(BASE_PATH, ".env")
-
-load_dotenv(ENV_PATH)
-RABBIT_HOST = os.getenv("RABIT_HOST")
-RABBIT_PORT = os.getenv("RABBIT_PORT")
-RABBITMQ_DEFAULT_USER = os.getenv("RABBIT_DEFAULT_USER")
-RABBITMQ_DEFAULT_PASS = os.getenv("RABBIT_DEFAULT_PASS")
-
-RMQ_URL = f"amqp://{RABBITMQ_DEFAULT_USER}:{RABBITMQ_DEFAULT_PASS}@{RABBIT_HOST}:{RABBIT_PORT}"
+print(RMQ_URL)
 
 
 async def server() -> None:
@@ -26,3 +14,13 @@ async def server() -> None:
     async with connection:
         channel = await connection.channel()
         rpc = await RPC.create(channel)
+        await rpc.register(resolve.__name__, resolve, auto_delete=True)
+
+        try:
+            await asyncio.Future()
+        finally:
+            await connection.close()
+
+
+if __name__ == '__main__':
+    asyncio.run(server())
