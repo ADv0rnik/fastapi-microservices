@@ -3,6 +3,7 @@ import uvicorn
 
 from fastapi import FastAPI, Depends, HTTPException
 from starlette.middleware.cors import CORSMiddleware
+from starlette.requests import Request
 from starlette.responses import Response
 from sqlalchemy.orm import Session
 
@@ -41,8 +42,8 @@ def route():
     return Response(content=json.dumps(message), status_code=200)
 
 
-@app.get('/{product_id}', response_model=ProductModel)
-def get_product(product_id: int, db: Session = Depends(get_db)):
+@app.get('/products/{product_id}', response_model=ProductModel)
+def get_product(request: Request, product_id: int, db: Session = Depends(get_db)):
     if product := get_product_by_id(db, product_id):
         return product
     else:
