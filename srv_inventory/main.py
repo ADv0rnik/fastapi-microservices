@@ -57,5 +57,6 @@ if __name__ == '__main__':
         app="main:app",
         host=settings.PROJECT_HOST,
         port=int(settings.PORT),
+        workers=4,
         reload=True
     )

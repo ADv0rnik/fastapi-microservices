@@ -1,8 +1,8 @@
 version: '3.9'
 
 services:
-  rabbitmq:
-    image: rabbitmq
+  rabbit:
+    image: lucifer8591/rabbitmq-server:3.7.17
     container_name: rabbit
     env_file:
       - .env
@@ -11,9 +11,13 @@ services:
       - "5672:5672"
       - "15672:15672"
     environment:
-      - RABBIT_DEFAULT_USER=${RABBIT_DEFAULT_USER}
-      - RABBIT_DEFAULT_PASS=${RABBIT_DEFAULT_PASS}
-    restart: always
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:15672" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
   db:
     image: postgres:14.5
     container_name: postgres
@@ -30,7 +34,7 @@ services:
       - ${DB_PORT}:${DB_PORT}
     command: -p ${DB_PORT}
     depends_on:
-      - rabbitmq
+      - rabbit
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4
@@ -46,16 +50,17 @@ services:
   app:
     container_name: producer
     build:
+      context: ./srv_inventory
       dockerfile: Dockerfile
     env_file:
       - .env
     volumes:
-      - ./srv_inventory:/app/srv_inventory
+      - ./srv_inventory:/app
     ports:
       - 8000:8000
     depends_on:
       - db
-      - rabbitmq
+      - rabbit
     restart: always
     command: ["python", "main.py"]
 
